@@ -1,0 +1,141 @@
+// Muku Learning App — Prisma Schema
+// Postgres self-hosted on VPS. API layer is the ONLY component that reads/writes here.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─────────────────────────────────────────────
+// USERS
+// ─────────────────────────────────────────────
+model User {
+  id           String    @id @default(uuid())
+  username     String    @unique
+  passwordHash String
+  name         String
+  avatar       String    @default("Kanchha")
+  ageGroup     String    @default("4-6")      // "4-6" | "7-10"
+  locality     String    @default("")          // Parent-selected, no GPS
+  hearts       Int       @default(5)
+  streak       Int       @default(0)
+  xp           Int       @default(0)
+  parentPin    String?                         // bcrypt hash of 4-digit PIN
+  onboarded    Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  progress    Progress[]
+  sessions    LessonSession[]
+  badges      UserBadge[]
+
+  @@map("users")
+}
+
+// ─────────────────────────────────────────────
+// CONTENT: CATEGORIES
+// ─────────────────────────────────────────────
+model Category {
+  id          String    @id @default(uuid())
+  slug        String    @unique   // "fruits", "animals", etc.
+  name        String
+  emoji       String
+  color       String    @default("#FFC107")
+  borderColor String    @default("#785900")
+  order       Int       @default(0)
+  isLocked    Boolean   @default(false)
+  unlockLevel Int       @default(0)          // 0 = always unlocked
+  createdAt   DateTime  @default(now())
+
+  words       Word[]
+  progress    Progress[]
+  sessions    LessonSession[]
+
+  @@map("categories")
+}
+
+// ─────────────────────────────────────────────
+// CONTENT: WORDS
+// ─────────────────────────────────────────────
+model Word {
+  id          String    @id @default(uuid())
+  categoryId  String
+  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  nepali      String
+  nepaliRoman String
+  english     String
+  phonetic    String
+  emoji       String
+  audioUrl    String?   // CDN URL for pronunciation audio
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+
+  @@map("words")
+}
+
+// ─────────────────────────────────────────────
+// PROGRESS: per user per category
+// ─────────────────────────────────────────────
+model Progress {
+  id             String    @id @default(uuid())
+  userId         String
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categoryId     String
+  category       Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  wordsLearned   Int       @default(0)
+  correctAnswers Int       @default(0)
+  totalAnswers   Int       @default(0)
+  lastPlayedAt   DateTime?
+  updatedAt      DateTime  @updatedAt
+
+  @@unique([userId, categoryId])
+  @@map("progress")
+}
+
+// ─────────────────────────────────────────────
+// SESSIONS: completed lesson records (for analytics & leaderboard)
+// ─────────────────────────────────────────────
+model LessonSession {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categoryId  String
+  category    Category  @relation(fields: [categoryId], references: [id])
+  xpGained    Int
+  accuracy    Float     // 0.0 – 1.0
+  durationSec Int       // seconds
+  locality    String    // snapshot of user.locality at time of session
+  completedAt DateTime  @default(now())
+
+  @@map("lesson_sessions")
+}
+
+// ─────────────────────────────────────────────
+// BADGES
+// ─────────────────────────────────────────────
+model Badge {
+  id          String      @id @default(uuid())
+  slug        String      @unique
+  name        String
+  emoji       String
+  description String
+  createdAt   DateTime    @default(now())
+
+  users       UserBadge[]
+
+  @@map("badges")
+}
+
+model UserBadge {
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badgeId   String
+  badge     Badge     @relation(fields: [badgeId], references: [id])
+  awardedAt DateTime  @default(now())
+
+  @@id([userId, badgeId])
+  @@map("user_badges")
+}
