@@ -18,7 +18,10 @@ app.use(cors());
 app.use(express.json());
 
 
-app.use('/admin',express.static(path.join(__dirname,'../admin')));
+const adminDir = path.join(__dirname, '../admin');
+app.use('/admin', express.static(adminDir));
+app.get('/admin', (_req, res) => res.sendFile(path.join(adminDir, 'index.html')));
+app.get('/admin/', (_req, res) => res.sendFile(path.join(adminDir, 'index.html')));
 // ── Health check ──────────────────────────────────────────────────────────────
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
