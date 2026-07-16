@@ -7,7 +7,7 @@ import prisma, { getPrismaForUser } from '../db';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
 
 const router = Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'muku-secret-key-12345';
+const JWT_SECRET = process.env.JWT_SECRET as string;
 
 // Helper to strip sensitive fields from user
 function sanitizeUser(user: any) {

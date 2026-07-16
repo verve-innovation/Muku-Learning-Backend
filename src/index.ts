@@ -9,6 +9,7 @@ import categoriesRouter from './routes/categories';
 import sessionsRouter from './routes/sessions';
 import leaderboardRouter from './routes/leaderboard';
 import adminRouter from './routes/admin';
+import path from 'path';
 
 const app = express();
 const PORT = process.env.PORT;
@@ -16,6 +17,11 @@ const PORT = process.env.PORT;
 app.use(cors());
 app.use(express.json());
 
+
+const adminDir = path.join(__dirname, '../admin');
+app.use('/admin', express.static(adminDir));
+app.get('/admin', (_req, res) => res.sendFile(path.join(adminDir, 'index.html')));
+app.get('/admin/', (_req, res) => res.sendFile(path.join(adminDir, 'index.html')));
 // ── Health check ──────────────────────────────────────────────────────────────
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
