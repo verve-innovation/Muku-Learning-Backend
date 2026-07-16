@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useMemo } from 'react';
 
 interface AuthContextType {
   token: string | null;
@@ -37,11 +37,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('muku_admin_api_url', apiUrl);
   }, [apiUrl]);
 
-  const login = (newToken: string) => setToken(newToken);
-  const logout = () => setToken(null);
+  const login = useCallback((newToken: string) => setToken(newToken), []);
+  const logout = useCallback(() => setToken(null), []);
+
+  const value = useMemo(() => ({
+    token,
+    isAuthenticated: !!token,
+    apiUrl,
+    setApiUrl,
+    login,
+    logout
+  }), [token, apiUrl, login, logout]);
 
   return (
-    <AuthContext.Provider value={{ token, isAuthenticated: !!token, apiUrl, setApiUrl, login, logout }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
