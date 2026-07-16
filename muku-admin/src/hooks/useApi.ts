@@ -1,9 +1,10 @@
+import { useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 
 export function useApi() {
   const { apiUrl, token, logout } = useAuth();
 
-  const apiRequest = async <T>(endpoint: string, options: RequestInit = {}): Promise<T> => {
+  const apiRequest = useCallback(async <T>(endpoint: string, options: RequestInit = {}): Promise<T> => {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       ...(options.headers as Record<string, string>),
@@ -28,7 +29,7 @@ export function useApi() {
     }
 
     return res.json();
-  };
+  }, [apiUrl, token, logout]);
 
   return { apiRequest };
 }
