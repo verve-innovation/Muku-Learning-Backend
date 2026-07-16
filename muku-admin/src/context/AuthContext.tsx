@@ -13,7 +13,17 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(() => localStorage.getItem('muku_admin_jwt'));
-  const [apiUrl, setApiUrl] = useState<string>(() => localStorage.getItem('muku_admin_api_url') || 'http://localhost:3000');
+  const [apiUrl, setApiUrl] = useState<string>(() => {
+    const saved = localStorage.getItem('muku_admin_api_url');
+    const currentOrigin = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
+    if (saved && saved !== 'http://localhost:3000') {
+      return saved;
+    }
+    if (currentOrigin.includes('localhost')) {
+      return saved || 'http://localhost:3000';
+    }
+    return currentOrigin;
+  });
 
   useEffect(() => {
     if (token) {
