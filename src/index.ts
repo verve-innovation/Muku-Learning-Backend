@@ -27,6 +27,8 @@ app.get('/health', (_req, res) => {
 });
 
 // ── Routes ────────────────────────────────────────────────────────────────────
+app.get('/',(_req, res)=>res.sendFile(path.join(__dirname,'..','index.html')))
+app.get('/privacypolicy',(_req, res)=>res.sendFile(path.join(__dirname,'..','privacypolicy.html')))
 app.use('/api/users', usersRouter);
 app.use('/api/categories', categoriesRouter);
 app.use('/api/sessions', sessionsRouter);
