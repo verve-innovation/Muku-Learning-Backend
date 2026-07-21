@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muku - Data Deletion Request</title>
+    <style>
+        :root {
+            --primary: #FF7043;
+            --primary-dark: #F4511E;
+            --bg: #FFF3E0;
+            --surface: #FFFFFF;
+            --text: #37474F;
+            --border: #FFE0B2;
+            --error: #D32F2F;
+            --success: #388E3C;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: var(--surface);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            max-width: 500px;
+            width: 100%;
+            margin: 20px;
+            border: 2px solid var(--border);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        p {
+            color: #607D8B;
+            font-size: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        button {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button:disabled {
+            background-color: #BCAAA4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+            font-weight: 500;
+        }
+
+        .alert.success {
+            background-color: #E8F5E9;
+            color: var(--success);
+            border: 1px solid #C8E6C9;
+            display: block;
+        }
+
+        .alert.error {
+            background-color: #FFEBEE;
+            color: var(--error);
+            border: 1px solid #FFCDD2;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Request Data Deletion</h1>
+            <p>If you would like us to delete your account and associated data from Muku, please fill out the form below.</p>
+        </div>
+        
+        <form id="deletionForm">
+            <div class="form-group">
+                <label for="email">Account Email Address *</label>
+                <input type="email" id="email" name="email" required placeholder="Enter the email associated with your account">
+            </div>
+            
+            <div class="form-group">
+                <label for="reason">Reason (Optional)</label>
+                <textarea id="reason" name="reason" placeholder="Please let us know why you are leaving..."></textarea>
+            </div>
+            
+            <button type="submit" id="submitBtn">Submit Request</button>
+        </form>
+
+        <div id="messageBox" class="alert"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('deletionForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const messageBox = document.getElementById('messageBox');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const reason = document.getElementById('reason').value;
+
+            // Reset UI
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            messageBox.className = 'alert';
+            messageBox.textContent = '';
+
+            try {
+                const response = await fetch('/api/deletion-requests', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, reason }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    messageBox.className = 'alert success';
+                    messageBox.textContent = 'Your data deletion request has been submitted successfully. We will process it shortly.';
+                    form.reset();
+                } else {
+                    messageBox.className = 'alert error';
+                    messageBox.textContent = data.error || 'Failed to submit request. Please try again.';
+                }
+            } catch (error) {
+                messageBox.className = 'alert error';
+                messageBox.textContent = 'A network error occurred. Please try again.';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Request';
+            }
+        });
+    </script>
+</body>
+</html>

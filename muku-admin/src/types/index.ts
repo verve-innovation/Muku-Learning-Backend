@@ -82,3 +82,11 @@ export interface OverviewStats {
   words: number;
   badges: number;
 }
+
+export interface DataDeletionRequest {
+  id: string;
+  email: string;
+  reason?: string;
+  status: string;
+  createdAt: string;
+}

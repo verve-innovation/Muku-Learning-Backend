@@ -9,8 +9,9 @@ import { ProgressTable } from '../tables/ProgressTable';
 import { SessionsTable } from '../tables/SessionsTable';
 import { BadgesTable } from '../tables/BadgesTable';
 import { UserBadgesTable } from '../tables/UserBadgesTable';
+import { DeletionRequestsTable } from '../tables/DeletionRequestsTable';
 
-export type TabType = 'overview' | 'users' | 'categories' | 'words' | 'progress' | 'sessions' | 'badges' | 'user-badges';
+export type TabType = 'overview' | 'users' | 'categories' | 'words' | 'progress' | 'sessions' | 'badges' | 'user-badges' | 'deletion-requests';
 
 export function Dashboard() {
   const [activeTab, setActiveTab] = useState<TabType>('overview');
@@ -26,6 +27,7 @@ export function Dashboard() {
       case 'sessions': return <SessionsTable />;
       case 'badges': return <BadgesTable />;
       case 'user-badges': return <UserBadgesTable />;
+      case 'deletion-requests': return <DeletionRequestsTable />;
       default: return <OverviewTab />;
     }
   };
@@ -39,17 +41,17 @@ export function Dashboard() {
       <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
       
       <main className="p-10 overflow-y-auto max-h-screen">
-        <div className="flex justify-between bg-bg-card border border-border-color rounded-xl px-6 py-3 mb-[30px] items-center">
+        <div className="flex justify-between bg-bg-card border border-border-color rounded-xl px-6 py-3 mb-7.5 items-center">
           <span className="text-[0.85rem] font-semibold text-text-muted">Connected API:</span>
           <input 
             type="text" 
-            className="bg-bg-input border border-border-color rounded-lg px-4 py-2 text-text-main w-[250px] outline-none text-[0.85rem]" 
+            className="bg-bg-input border border-border-color rounded-lg px-4 py-2 text-text-main w-62.5 outline-none text-[0.85rem]" 
             value={apiUrl}
             onChange={(e) => setApiUrl(e.target.value)}
           />
         </div>
 
-        <div className="flex justify-between items-center mb-[30px]">
+        <div className="flex justify-between items-center mb-7.5">
           <h2 className="font-title text-[2rem] font-extrabold">{getTabTitle()}</h2>
           <div id="tab-header-actions"></div>
         </div>
