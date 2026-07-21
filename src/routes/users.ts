@@ -229,6 +229,7 @@ const UpdateUserSchema = z.object({
   avatar: z.string().optional(),
   ageGroup: z.enum(['4-6', '7-10']).optional(),
   locality: z.string().optional(),
+  hearts: z.number().min(0).max(5).optional(),
 });
 
 router.patch('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {

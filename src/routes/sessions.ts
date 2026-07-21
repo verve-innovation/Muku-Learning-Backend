@@ -8,19 +8,36 @@ const router = Router();
 const SessionSchema = z.object({
   userId: z.string().min(1),
   categorySlug: z.string().min(1),
-  xpGained: z.number().int().min(0),
+  lessonSlug: z.string().optional(),
   correctAnswers: z.number().int().min(0),
-  totalAnswers: z.number().int().min(1),
+  totalAnswers: z.number().int().min(0),
   durationSec: z.number().int().min(0),
   locality: z.string(),
 });
 
+/** XP is computed server-side so clients cannot inflate scores. */
+function computeXpGained(correctAnswers: number, totalAnswers: number): number {
+  if (totalAnswers === 0) return 0;
+  const accuracy = correctAnswers / totalAnswers;
+  const base = correctAnswers * 10;
+  const accuracyBonus = Math.round(accuracy * 20);
+  const completionBonus = 15;
+  return Math.max(10, base + accuracyBonus + completionBonus);
+}
+
 // ── Complete a Lesson Session ─────────────────────────────────────────────────
 router.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
   const parsed = SessionSchema.safeParse(req.body);
-  if (!parsed.success) return res.status(400).json({ error: parsed.error.flatten() });
+  if (!parsed.success) {
+    const fieldErrors = parsed.error.flatten().fieldErrors;
+    const messages = Object.entries(fieldErrors).flatMap(([k, v]) =>
+      (v ?? []).map((m) => `${k}: ${m}`)
+    );
+    return res.status(400).json({ error: messages.join('; ') || 'Invalid request body' });
+  }
 
-  const { userId, categorySlug, xpGained, correctAnswers, totalAnswers, durationSec, locality } = parsed.data;
+  const { userId, categorySlug, lessonSlug, correctAnswers, totalAnswers, durationSec, locality } = parsed.data;
+  const xpGained = computeXpGained(correctAnswers, totalAnswers);
 
   // Security check: Make sure user is submitting session for themselves
   if (req.user!.id !== userId) {
@@ -64,6 +81,7 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
       data: {
         userId,
         categoryId: category.id,
+        lessonSlug: lessonSlug || null,
         xpGained,
         accuracy,
         durationSec,
@@ -89,7 +107,22 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
       select: { id: true, xp: true, streak: true, hearts: true },
     });
 
-    // 6. Award badges if criteria met
+    // 6. Unlock the next category when this one is fully complete
+    const wordCount = await userPrisma.word.count({ where: { categoryId: category.id } });
+    if (wordCount > 0 && progress.wordsLearned >= wordCount) {
+      const nextCategory = await userPrisma.category.findFirst({
+        where: { order: { gt: category.order }, isLocked: true },
+        orderBy: { order: 'asc' },
+      });
+      if (nextCategory) {
+        await userPrisma.category.update({
+          where: { id: nextCategory.id },
+          data: { isLocked: false },
+        });
+      }
+    }
+
+    // 7. Award badges if criteria met
     const badges = await awardBadges(userPrisma, userId, updatedUser.xp, updatedUser.streak, accuracy, durationSec);
 
     return res.status(201).json({ session, progress, user: updatedUser, newBadges: badges });
