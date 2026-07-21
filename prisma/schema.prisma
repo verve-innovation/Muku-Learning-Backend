@@ -51,10 +51,29 @@ model Category {
   createdAt   DateTime  @default(now())
 
   words       Word[]
+  lessons     Lesson[]
   progress    Progress[]
   sessions    LessonSession[]
 
   @@map("categories")
+}
+
+// ─────────────────────────────────────────────
+// CONTENT: LESSONS (units within a category/chapter)
+// ─────────────────────────────────────────────
+model Lesson {
+  id          String    @id @default(uuid())
+  categoryId  String
+  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  slug        String    @unique   // e.g. "fruits-lesson-1"
+  name        String
+  order       Int       @default(1)
+  createdAt   DateTime  @default(now())
+
+  words       Word[]
+  fillBlanks  FillBlank[]
+
+  @@map("lessons")
 }
 
 // ─────────────────────────────────────────────
@@ -64,6 +83,8 @@ model Word {
   id          String    @id @default(uuid())
   categoryId  String
   category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  lessonId    String?
+  lesson      Lesson?   @relation(fields: [lessonId], references: [id], onDelete: SetNull)
   nepali      String
   nepaliRoman String
   english     String
@@ -72,6 +93,8 @@ model Word {
   audioUrl    String?   // CDN URL for pronunciation audio
   order       Int       @default(0)
   createdAt   DateTime  @default(now())
+
+  fillBlanks  FillBlank[]
 
   @@map("words")
 }
@@ -104,6 +127,7 @@ model LessonSession {
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   categoryId  String
   category    Category  @relation(fields: [categoryId], references: [id])
+  lessonSlug  String?
   xpGained    Int
   accuracy    Float     // 0.0 – 1.0
   durationSec Int       // seconds
@@ -138,4 +162,23 @@ model UserBadge {
 
   @@id([userId, badgeId])
   @@map("user_badges")
+}
+
+// ─────────────────────────────────────────────
+// FILL BLANK QUESTIONS
+// ─────────────────────────────────────────────
+model FillBlank {
+  id               String   @id @default(uuid())
+  lessonId         String
+  lesson           Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  wordId           String
+  word             Word     @relation(fields: [wordId], references: [id], onDelete: Cascade)
+  sentenceTemplate String   // e.g. "म ___ खान्छु।"
+  blankAnswer      String   // e.g. "केरा"
+  englishHint      String   // e.g. "I eat Banana"
+  emoji            String   // e.g. "🍌"
+  order            Int      @default(0)
+  createdAt        DateTime @default(now())
+
+  @@map("fill_blanks")
 }
