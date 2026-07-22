@@ -39,7 +39,7 @@ export function DeletionRequestsTable() {
 
   const columns = [
     { header: 'Date', render: (r: DataDeletionRequest) => new Date(r.createdAt).toLocaleDateString() },
-    { header: 'Email', render: (r: DataDeletionRequest) => r.email },
+    { header: 'Username', render: (r: DataDeletionRequest) => r.username },
     { header: 'Reason', render: (r: DataDeletionRequest) => <span className="truncate max-w-50 inline-block" title={r.reason}>{r.reason || '-'}</span> },
     { 
       header: 'Status', 
@@ -75,7 +75,7 @@ export function DeletionRequestsTable() {
       >
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <p className="text-sm text-text-muted mb-2"><strong>Email:</strong> {editingRecord?.email}</p>
+            <p className="text-sm text-text-muted mb-2"><strong>Username:</strong> {editingRecord?.username}</p>
             <p className="text-sm text-text-muted mb-4"><strong>Reason:</strong> {editingRecord?.reason || 'None provided'}</p>
           </div>
 

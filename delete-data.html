@@ -146,8 +146,13 @@
         
         <form id="deletionForm">
             <div class="form-group">
-                <label for="email">Account Email Address *</label>
-                <input type="email" id="email" name="email" required placeholder="Enter the email associated with your account">
+                <label for="username">Username *</label>
+                <input type="text" id="username" name="username" required placeholder="Enter your Muku username">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password *</label>
+                <input type="password" id="password" name="password" required placeholder="Enter your password">
             </div>
             
             <div class="form-group">
@@ -169,7 +174,8 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const email = document.getElementById('email').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
             const reason = document.getElementById('reason').value;
 
             // Reset UI
@@ -184,7 +190,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ email, reason }),
+                    body: JSON.stringify({ username, password, reason }),
                 });
 
                 const data = await response.json();

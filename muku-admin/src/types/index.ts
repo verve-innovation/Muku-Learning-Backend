@@ -85,7 +85,7 @@ export interface OverviewStats {
 
 export interface DataDeletionRequest {
   id: string;
-  email: string;
+  username: string;
   reason?: string;
   status: string;
   createdAt: string;
