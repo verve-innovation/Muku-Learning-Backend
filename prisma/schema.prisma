@@ -188,7 +188,7 @@ model FillBlank {
 // ─────────────────────────────────────────────
 model DataDeletionRequest {
   id        String   @id @default(uuid())
-  email     String
+  username  String
   reason    String?
   status    String   @default("pending") // pending, approved, rejected
   createdAt DateTime @default(now())
