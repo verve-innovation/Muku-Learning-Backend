@@ -19,6 +19,7 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
     { id: 'sessions', icon: '🎓', label: 'Sessions' },
     { id: 'badges', icon: '🏆', label: 'Badges' },
     { id: 'user-badges', icon: '🏅', label: 'User Badges' },
+    { id: 'deletion-requests', icon: '🗑️', label: 'Data Deletions' },
   ];
 
   return (

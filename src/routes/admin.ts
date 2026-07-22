@@ -356,4 +356,41 @@ router.delete('/user-badges/:userId/:badgeId', async (req: AuthRequest, res: Res
   }
 });
 
+// ── DATA DELETION REQUESTS CRUD ───────────────────────────────────────────────
+router.get('/deletion-requests', async (req: AuthRequest, res: Response) => {
+  try {
+    const data = await prisma.dataDeletionRequest.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
+    return res.json(data);
+  } catch (e) {
+    return res.status(500).json({ error: 'Failed to fetch deletion requests' });
+  }
+});
+
+router.patch('/deletion-requests/:id', async (req: AuthRequest, res: Response) => {
+  const id = req.params.id as string;
+  const { status } = req.body;
+  try {
+    const data = await prisma.dataDeletionRequest.update({
+      where: { id },
+      data: { status },
+    });
+    return res.json(data);
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: 'Failed to update deletion request' });
+  }
+});
+
+router.delete('/deletion-requests/:id', async (req: AuthRequest, res: Response) => {
+  const id = req.params.id as string;
+  try {
+    await prisma.dataDeletionRequest.delete({ where: { id } });
+    return res.json({ success: true });
+  } catch (e) {
+    return res.status(500).json({ error: 'Failed to delete deletion request' });
+  }
+});
+
 export default router;
