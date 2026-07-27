@@ -4,12 +4,14 @@ import { useApi } from '../../hooks/useApi';
 import { Badge } from '../../types';
 import { DataTable } from './DataTable';
 import { CrudModal } from '../modals/CrudModal';
+import { CsvImportModal } from '../modals/CsvImportModal';
 import { Button } from '../ui/Button';
 import { Input, Textarea } from '../ui/Input';
 
 export function BadgesTable() {
   const { data, loading, error, refetch, deleteRecord } = useTabData<Badge>('/badges');
   const [modalOpen, setModalOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
   const [editingRecord, setEditingRecord] = useState<Badge | null>(null);
   const { apiRequest } = useApi();
 
@@ -54,12 +56,33 @@ export function BadgesTable() {
     )}
   ];
 
+  const csvColumns = [
+    { key: 'name', label: 'name' },
+    { key: 'slug', label: 'slug' },
+    { key: 'emoji', label: 'emoji' },
+    { key: 'description', label: 'description' },
+  ];
+
+  const csvTemplate = {
+    name: 'First Steps', slug: 'first-steps', emoji: '👣', description: 'Awarded for completing your first lesson',
+  };
+
   if (loading) return <div className="text-text-muted">Fetching database records...</div>;
   if (error) return <div className="text-danger font-semibold">Error: {error}</div>;
 
   return (
     <>
-      <DataTable columns={columns} data={data} onAdd={handleAdd} />
+      <DataTable columns={columns} data={data} onAdd={handleAdd} onImport={() => setImportOpen(true)} />
+
+      <CsvImportModal
+        isOpen={importOpen}
+        onClose={() => setImportOpen(false)}
+        onSuccess={refetch}
+        endpoint="/badges"
+        tableName="Badges"
+        columns={csvColumns}
+        templateRow={csvTemplate}
+      />
       
       <CrudModal 
         isOpen={modalOpen} 

@@ -4,12 +4,14 @@ import { useApi } from '../../hooks/useApi';
 import { Word } from '../../types';
 import { DataTable } from './DataTable';
 import { CrudModal } from '../modals/CrudModal';
+import { CsvImportModal } from '../modals/CsvImportModal';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 
 export function WordsTable() {
   const { data, loading, error, refetch, deleteRecord } = useTabData<Word>('/words');
   const [modalOpen, setModalOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
   const [editingRecord, setEditingRecord] = useState<Word | null>(null);
   const { apiRequest } = useApi();
 
@@ -56,12 +58,39 @@ export function WordsTable() {
     )}
   ];
 
+  const csvColumns = [
+    { key: 'categoryId', label: 'categoryId' },
+    { key: 'nepali', label: 'nepali' },
+    { key: 'nepaliRoman', label: 'nepaliRoman' },
+    { key: 'english', label: 'english' },
+    { key: 'phonetic', label: 'phonetic' },
+    { key: 'emoji', label: 'emoji' },
+    { key: 'order', label: 'order', transform: (v: string) => parseInt(v) || 0 },
+    { key: 'audioUrl', label: 'audioUrl' },
+  ];
+
+  const csvTemplate = {
+    categoryId: 'paste-category-uuid-here',
+    nepali: 'नमस्ते', nepaliRoman: 'Namaste', english: 'Hello',
+    phonetic: 'nuh-muh-stay', emoji: '🙏', order: '1', audioUrl: '',
+  };
+
   if (loading) return <div className="text-text-muted">Fetching database records...</div>;
   if (error) return <div className="text-danger font-semibold">Error: {error}</div>;
 
   return (
     <>
-      <DataTable columns={columns} data={data} onAdd={handleAdd} />
+      <DataTable columns={columns} data={data} onAdd={handleAdd} onImport={() => setImportOpen(true)} />
+
+      <CsvImportModal
+        isOpen={importOpen}
+        onClose={() => setImportOpen(false)}
+        onSuccess={refetch}
+        endpoint="/words"
+        tableName="Words"
+        columns={csvColumns}
+        templateRow={csvTemplate}
+      />
       
       <CrudModal 
         isOpen={modalOpen} 

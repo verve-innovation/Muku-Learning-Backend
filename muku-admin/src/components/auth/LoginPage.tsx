@@ -4,8 +4,8 @@ import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 
 export function LoginPage() {
-  const [username, setUsername] = useState('admin');
-  const [password, setPassword] = useState('admin123');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const { login, apiUrl } = useAuth();
 
@@ -46,7 +46,7 @@ export function LoginPage() {
         <form onSubmit={handleLogin}>
           <Input 
             label="Username" 
-            placeholder="admin" 
+            placeholder="Username..." 
             required 
             value={username} 
             onChange={(e) => setUsername(e.target.value)} 
@@ -54,7 +54,7 @@ export function LoginPage() {
           <Input 
             type="password" 
             label="Password" 
-            placeholder="••••••••" 
+            placeholder="Password..." 
             required 
             value={password} 
             onChange={(e) => setPassword(e.target.value)} 

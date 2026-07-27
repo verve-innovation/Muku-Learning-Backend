@@ -12,16 +12,28 @@ interface DataTableProps {
   data: any[];
   onAdd?: () => void;
   addLabel?: string;
+  onImport?: () => void;
 }
 
-export function DataTable({ columns, data, onAdd, addLabel = 'Add New Record' }: DataTableProps) {
+export function DataTable({ columns, data, onAdd, addLabel = 'Add New Record', onImport }: DataTableProps) {
   return (
     <>
-      {onAdd && (
-        <div id="tab-header-actions" className="mt-[-70px] mb-8 flex justify-end">
-          <Button onClick={onAdd} className="w-auto px-5 py-2.5 flex items-center gap-2">
-            ✚ {addLabel}
-          </Button>
+      {(onAdd || onImport) && (
+        <div id="tab-header-actions" className="mt-[-70px] mb-8 flex justify-end gap-3">
+          {onImport && (
+            <Button
+              onClick={onImport}
+              variant="secondary"
+              className="w-auto px-5 py-2.5 flex items-center gap-2 border border-border-color"
+            >
+              📥 Import CSV / Excel
+            </Button>
+          )}
+          {onAdd && (
+            <Button onClick={onAdd} className="w-auto px-5 py-2.5 flex items-center gap-2">
+              ✚ {addLabel}
+            </Button>
+          )}
         </div>
       )}
       

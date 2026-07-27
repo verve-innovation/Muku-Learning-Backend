@@ -4,12 +4,14 @@ import { useApi } from '../../hooks/useApi';
 import { Progress } from '../../types';
 import { DataTable } from './DataTable';
 import { CrudModal } from '../modals/CrudModal';
+import { CsvImportModal } from '../modals/CsvImportModal';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 
 export function ProgressTable() {
   const { data, loading, error, refetch, deleteRecord } = useTabData<Progress>('/progress');
   const [modalOpen, setModalOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
   const [editingRecord, setEditingRecord] = useState<Progress | null>(null);
   const { apiRequest } = useApi();
 
@@ -55,12 +57,38 @@ export function ProgressTable() {
     )}
   ];
 
+  const csvColumns = [
+    { key: 'userId', label: 'userId' },
+    { key: 'categoryId', label: 'categoryId' },
+    { key: 'wordsLearned', label: 'wordsLearned', transform: (v: string) => parseInt(v) || 0 },
+    { key: 'correctAnswers', label: 'correctAnswers', transform: (v: string) => parseInt(v) || 0 },
+    { key: 'totalAnswers', label: 'totalAnswers', transform: (v: string) => parseInt(v) || 0 },
+  ];
+
+  const csvTemplate = {
+    userId: 'paste-user-uuid-here',
+    categoryId: 'paste-category-uuid-here',
+    wordsLearned: '10',
+    correctAnswers: '8',
+    totalAnswers: '10',
+  };
+
   if (loading) return <div className="text-text-muted">Fetching database records...</div>;
   if (error) return <div className="text-danger font-semibold">Error: {error}</div>;
 
   return (
     <>
-      <DataTable columns={columns} data={data} onAdd={handleAdd} />
+      <DataTable columns={columns} data={data} onAdd={handleAdd} onImport={() => setImportOpen(true)} />
+
+      <CsvImportModal
+        isOpen={importOpen}
+        onClose={() => setImportOpen(false)}
+        onSuccess={refetch}
+        endpoint="/progress"
+        tableName="Progress"
+        columns={csvColumns}
+        templateRow={csvTemplate}
+      />
       
       <CrudModal 
         isOpen={modalOpen} 

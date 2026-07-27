@@ -4,12 +4,14 @@ import { useApi } from '../../hooks/useApi';
 import { UserBadge } from '../../types';
 import { DataTable } from './DataTable';
 import { CrudModal } from '../modals/CrudModal';
+import { CsvImportModal } from '../modals/CsvImportModal';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 
 export function UserBadgesTable() {
   const { data, loading, error, refetch, deleteRecord } = useTabData<UserBadge>('/user-badges');
   const [modalOpen, setModalOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
   const { apiRequest } = useApi();
 
   const handleAdd = () => {
@@ -22,7 +24,6 @@ export function UserBadgesTable() {
     const payload = Object.fromEntries(formData.entries());
 
     try {
-      // NOTE: This assumes the original system had a POST /user-badges endpoint to create one
       await apiRequest('/user-badges', {
         method: 'POST',
         body: JSON.stringify(payload),
@@ -55,12 +56,32 @@ export function UserBadgesTable() {
     )}
   ];
 
+  const csvColumns = [
+    { key: 'userId', label: 'userId' },
+    { key: 'badgeId', label: 'badgeId' },
+  ];
+
+  const csvTemplate = {
+    userId: 'paste-user-uuid-here',
+    badgeId: 'paste-badge-uuid-here',
+  };
+
   if (loading) return <div className="text-text-muted">Fetching database records...</div>;
   if (error) return <div className="text-danger font-semibold">Error: {error}</div>;
 
   return (
     <>
-      <DataTable columns={columns} data={data} onAdd={handleAdd} addLabel="Award Badge" />
+      <DataTable columns={columns} data={data} onAdd={handleAdd} addLabel="Award Badge" onImport={() => setImportOpen(true)} />
+
+      <CsvImportModal
+        isOpen={importOpen}
+        onClose={() => setImportOpen(false)}
+        onSuccess={refetch}
+        endpoint="/user-badges"
+        tableName="User Badges"
+        columns={csvColumns}
+        templateRow={csvTemplate}
+      />
       
       <CrudModal 
         isOpen={modalOpen} 

@@ -4,12 +4,14 @@ import { useApi } from '../../hooks/useApi';
 import { Category } from '../../types';
 import { DataTable } from './DataTable';
 import { CrudModal } from '../modals/CrudModal';
+import { CsvImportModal } from '../modals/CsvImportModal';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 
 export function CategoriesTable() {
   const { data, loading, error, refetch, deleteRecord } = useTabData<Category>('/categories');
   const [modalOpen, setModalOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
   const [editingRecord, setEditingRecord] = useState<Category | null>(null);
   const { apiRequest } = useApi();
 
@@ -57,12 +59,38 @@ export function CategoriesTable() {
     )}
   ];
 
+  const csvColumns = [
+    { key: 'name', label: 'name' },
+    { key: 'slug', label: 'slug' },
+    { key: 'emoji', label: 'emoji' },
+    { key: 'color', label: 'color' },
+    { key: 'borderColor', label: 'borderColor' },
+    { key: 'order', label: 'order', transform: (v: string) => parseInt(v) || 0 },
+    { key: 'unlockLevel', label: 'unlockLevel', transform: (v: string) => parseInt(v) || 0 },
+    { key: 'isLocked', label: 'isLocked', transform: (v: string) => v.toLowerCase() === 'true' },
+  ];
+
+  const csvTemplate = {
+    name: 'Greetings', slug: 'greetings', emoji: '👋', color: '#FFFDE7',
+    borderColor: '#FFF9C4', order: '1', unlockLevel: '0', isLocked: 'false',
+  };
+
   if (loading) return <div className="text-text-muted">Fetching database records...</div>;
   if (error) return <div className="text-danger font-semibold">Error: {error}</div>;
 
   return (
     <>
-      <DataTable columns={columns} data={data} onAdd={handleAdd} />
+      <DataTable columns={columns} data={data} onAdd={handleAdd} onImport={() => setImportOpen(true)} />
+
+      <CsvImportModal
+        isOpen={importOpen}
+        onClose={() => setImportOpen(false)}
+        onSuccess={refetch}
+        endpoint="/categories"
+        tableName="Categories"
+        columns={csvColumns}
+        templateRow={csvTemplate}
+      />
       
       <CrudModal 
         isOpen={modalOpen} 

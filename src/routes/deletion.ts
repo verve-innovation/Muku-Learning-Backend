@@ -6,8 +6,8 @@ import prisma from '../db';
 const router = Router();
 
 const DeletionRequestSchema = z.object({
-  username: z.string().min(1, 'Username is required'),
-  password: z.string().min(1, 'Password is required'),
+  username: z.string().min(3, 'Username is required'),
+  password: z.string().min(8, 'Password is required'),
   reason: z.string().optional(),
 });
 
