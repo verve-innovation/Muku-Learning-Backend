@@ -107,22 +107,7 @@ router.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
       select: { id: true, xp: true, streak: true, hearts: true },
     });
 
-    // 6. Unlock the next category when this one is fully complete
-    const wordCount = await userPrisma.word.count({ where: { categoryId: category.id } });
-    if (wordCount > 0 && progress.wordsLearned >= wordCount) {
-      const nextCategory = await userPrisma.category.findFirst({
-        where: { order: { gt: category.order }, isLocked: true },
-        orderBy: { order: 'asc' },
-      });
-      if (nextCategory) {
-        await userPrisma.category.update({
-          where: { id: nextCategory.id },
-          data: { isLocked: false },
-        });
-      }
-    }
-
-    // 7. Award badges if criteria met
+    // 6. Award badges if criteria met
     const badges = await awardBadges(userPrisma, userId, updatedUser.xp, updatedUser.streak, accuracy, durationSec);
 
     return res.status(201).json({ session, progress, user: updatedUser, newBadges: badges });

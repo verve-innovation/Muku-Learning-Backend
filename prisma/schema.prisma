@@ -48,7 +48,7 @@ model Category {
   borderColor String    @default("#785900")
   order       Int       @default(0)
   isLocked    Boolean   @default(false)
-  unlockLevel Int       @default(0)          // 0 = always unlocked
+  unlockLevel Int       @default(0)          // 0 = always unlocked; minimum level required to unlock
   createdAt   DateTime  @default(now())
 
   words       Word[]

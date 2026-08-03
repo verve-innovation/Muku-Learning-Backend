@@ -110,12 +110,12 @@ export function CategoriesTable() {
           
           <div className="grid grid-cols-2 gap-2.5">
             <Input type="number" label="Display Order" name="order" required defaultValue={editingRecord?.order || 0} />
-            <Input type="number" label="Required XP to Unlock (unlockLevel)" name="unlockLevel" required defaultValue={editingRecord?.unlockLevel || 0} />
+            <Input type="number" label="Required Level to Unlock (unlockLevel)" name="unlockLevel" required defaultValue={editingRecord?.unlockLevel || 0} />
           </div>
           
           <div className="mb-5 flex items-center gap-2">
             <input type="checkbox" name="isLocked" id="isLocked" defaultChecked={editingRecord?.isLocked} />
-            <label htmlFor="isLocked" className="text-[0.85rem] font-semibold text-text-muted">Force lock regardless of XP (Hidden / Unreleased)</label>
+            <label htmlFor="isLocked" className="text-[0.85rem] font-semibold text-text-muted">Force lock regardless of level (Hidden / Unreleased)</label>
           </div>
 
           <div className="flex justify-end gap-[15px] mt-[25px]">
