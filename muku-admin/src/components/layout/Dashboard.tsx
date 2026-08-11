@@ -4,14 +4,16 @@ import { Sidebar } from './Sidebar';
 import { OverviewTab } from '../dashboard/OverviewTab';
 import { UsersTable } from '../tables/UsersTable';
 import { CategoriesTable } from '../tables/CategoriesTable';
+import { LessonsTable } from '../tables/LessonsTable';
 import { WordsTable } from '../tables/WordsTable';
+import { FillBlanksTable } from '../tables/FillBlanksTable';
 import { ProgressTable } from '../tables/ProgressTable';
 import { SessionsTable } from '../tables/SessionsTable';
 import { BadgesTable } from '../tables/BadgesTable';
 import { UserBadgesTable } from '../tables/UserBadgesTable';
 import { DeletionRequestsTable } from '../tables/DeletionRequestsTable';
 
-export type TabType = 'overview' | 'users' | 'categories' | 'words' | 'progress' | 'sessions' | 'badges' | 'user-badges' | 'deletion-requests';
+export type TabType = 'overview' | 'users' | 'categories' | 'lessons' | 'words' | 'fill-blanks' | 'progress' | 'sessions' | 'badges' | 'user-badges' | 'deletion-requests';
 
 export function Dashboard() {
   const [activeTab, setActiveTab] = useState<TabType>('overview');
@@ -22,7 +24,9 @@ export function Dashboard() {
       case 'overview': return <OverviewTab />;
       case 'users': return <UsersTable />;
       case 'categories': return <CategoriesTable />;
+      case 'lessons': return <LessonsTable />;
       case 'words': return <WordsTable />;
+      case 'fill-blanks': return <FillBlanksTable />;
       case 'progress': return <ProgressTable />;
       case 'sessions': return <SessionsTable />;
       case 'badges': return <BadgesTable />;

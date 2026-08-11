@@ -133,16 +133,28 @@ export function CsvImportModal({
     setProgress({ done: 0, total: rows.length });
     const errs: string[] = [];
 
-    for (let i = 0; i < rows.length; i++) {
+    // Process in batches of 10 to balance speed and progress updates
+    const batchSize = 10;
+    for (let i = 0; i < rows.length; i += batchSize) {
+      const batch = rows.slice(i, i + batchSize);
       try {
-        await apiRequest(endpoint, {
+        const result: any = await apiRequest(endpoint, {
           method: 'POST',
-          body: JSON.stringify(rows[i]),
+          body: JSON.stringify({ rows: batch }),
         });
+        
+        // Check for any failed rows in the batch response
+        if (result && result.failed && result.failed.length > 0) {
+          result.failed.forEach((f: any) => {
+            errs.push(`Row error: ${f.error}`);
+          });
+        }
       } catch (err: any) {
-        errs.push(`Row ${i + 1}: ${err.message}`);
+        errs.push(`Batch ${Math.floor(i/batchSize) + 1} error: ${err.message}`);
       }
-      setProgress({ done: i + 1, total: rows.length });
+      
+      const newDone = Math.min(i + batchSize, rows.length);
+      setProgress({ done: newDone, total: rows.length });
     }
 
     setErrors(errs);
