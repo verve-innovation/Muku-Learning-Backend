@@ -31,7 +31,7 @@ export function ProgressTable() {
     const payload = Object.fromEntries(formData.entries());
 
     try {
-      const endpoint = editingRecord ? `/progress/${editingRecord.id}` : '/progress';
+      const endpoint = '/progress';
       await apiRequest(endpoint, {
         method: 'POST',
         body: JSON.stringify(payload),

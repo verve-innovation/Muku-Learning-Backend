@@ -44,23 +44,25 @@ router.post('/', async (req: AuthRequest, res: Response) => {
   const { name, username, password, avatar, ageGroup, locality } = parsed.data;
 
   try {
-    // Uniqueness check (we query with main prisma instance for initial check)
+    const passwordHash = await bcrypt.hash(password, 10);
     const existing = await prisma.user.findUnique({
       where: { username: username.toLowerCase() },
     });
-    if (existing) {
-      return res.status(400).json({ error: 'Username is already taken' });
-    }
+    const targetId = existing ? existing.id : crypto.randomUUID();
 
-    const passwordHash = await bcrypt.hash(password, 10);
-    const newUserId = crypto.randomUUID();
-
-    // To satisfy RLS for inserting own record:
-    // policy check: id = auth.uid()::text
-    const userPrisma = getPrismaForUser(newUserId);
-    const user = await userPrisma.user.create({
-      data: {
-        id: newUserId,
+    const userPrisma = getPrismaForUser(targetId);
+    const user = await userPrisma.user.upsert({
+      where: { username: username.toLowerCase() },
+      update: {
+        name,
+        passwordHash,
+        avatar,
+        ageGroup,
+        locality,
+        onboarded: true,
+      },
+      create: {
+        id: targetId,
         name,
         username: username.toLowerCase(),
         passwordHash,

@@ -14,10 +14,11 @@ function getRequestedLevel(req: AuthRequest): number {
 // ── List all Categories (with optional user progress) ─────────────────────────
 router.get('/', authMiddleware, async (req: AuthRequest, res: Response) => {
   const userId = req.user!.id;
-  const userLevel = getRequestedLevel(req);
 
   try {
     const userPrisma = getPrismaForUser(userId);
+    const user = await userPrisma.user.findUnique({ where: { id: userId }, select: { xp: true } });
+    const userXp = user?.xp ?? 0;
 
     const categories = await userPrisma.category.findMany({
       orderBy: { order: 'asc' },
@@ -35,8 +36,8 @@ router.get('/', authMiddleware, async (req: AuthRequest, res: Response) => {
       const wordsLearned = progress?.wordsLearned ?? 0;
       const progressPct = wordCount > 0 ? Math.min(100, Math.round((wordsLearned / wordCount) * 100)) : 0;
 
-      // Dynamic per-user unlocking based on the client-computed level
-      const isLocked = cat.isLocked || userLevel < cat.unlockLevel;
+      // Dynamic per-user unlocking based on the user's actual XP from database
+      const isLocked = cat.isLocked || userXp < cat.unlockLevel;
 
       return {
         id: cat.id,
@@ -64,10 +65,11 @@ router.get('/', authMiddleware, async (req: AuthRequest, res: Response) => {
 // ── List lessons for a category ───────────────────────────────────────────────
 router.get('/:slug/lessons', authMiddleware, async (req: AuthRequest, res: Response) => {
   const userId = req.user!.id;
-  const userLevel = getRequestedLevel(req);
   try {
     const slug = req.params.slug as string;
     const userPrisma = getPrismaForUser(userId);
+    const user = await userPrisma.user.findUnique({ where: { id: userId }, select: { xp: true } });
+    const userXp = user?.xp ?? 0;
 
     const category = await userPrisma.category.findUnique({
       where: { slug },
@@ -82,7 +84,7 @@ router.get('/:slug/lessons', authMiddleware, async (req: AuthRequest, res: Respo
     if (!category) return res.status(404).json({ error: 'Category not found' });
 
     // Check if category is locked for this user
-    if (category.isLocked || userLevel < category.unlockLevel) {
+    if (category.isLocked || userXp < category.unlockLevel) {
       return res.status(403).json({ error: 'Category is locked' });
     }
 
@@ -107,16 +109,17 @@ router.get('/:slug/lessons', authMiddleware, async (req: AuthRequest, res: Respo
 // ── Get Words for a Lesson ────────────────────────────────────────────────────
 router.get('/:slug/lessons/:lessonSlug/words', authMiddleware, async (req: AuthRequest, res: Response) => {
   const userId = req.user!.id;
-  const userLevel = getRequestedLevel(req);
   try {
     const categorySlug = req.params.slug as string;
     const lessonSlug = req.params.lessonSlug as string;
     const userPrisma = getPrismaForUser(userId);
+    const user = await userPrisma.user.findUnique({ where: { id: userId }, select: { xp: true } });
+    const userXp = user?.xp ?? 0;
 
     const category = await userPrisma.category.findUnique({ where: { slug: categorySlug } });
     if (!category) return res.status(404).json({ error: 'Category not found' });
 
-    if (category.isLocked || userLevel < category.unlockLevel) {
+    if (category.isLocked || userXp < category.unlockLevel) {
       return res.status(403).json({ error: 'Category is locked' });
     }
 
@@ -145,10 +148,11 @@ router.get('/:slug/lessons/:lessonSlug/words', authMiddleware, async (req: AuthR
 // ── Get Words for a Category (legacy — all words, first lesson if lessons exist) ─
 router.get('/:slug/words', authMiddleware, async (req: AuthRequest, res: Response) => {
   const userId = req.user!.id;
-  const userLevel = getRequestedLevel(req);
   try {
     const slug = req.params.slug as string;
     const userPrisma = getPrismaForUser(userId);
+    const user = await userPrisma.user.findUnique({ where: { id: userId }, select: { xp: true } });
+    const userXp = user?.xp ?? 0;
 
     const category = await userPrisma.category.findUnique({
       where: { slug },
@@ -163,7 +167,7 @@ router.get('/:slug/words', authMiddleware, async (req: AuthRequest, res: Respons
 
     if (!category) return res.status(404).json({ error: 'Category not found' });
 
-    if (category.isLocked || userLevel < category.unlockLevel) {
+    if (category.isLocked || userXp < category.unlockLevel) {
       return res.status(403).json({ error: 'Category is locked' });
     }
 

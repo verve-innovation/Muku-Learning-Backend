@@ -31,7 +31,7 @@ export function WordsTable() {
     const payload = Object.fromEntries(formData.entries());
 
     try {
-      const endpoint = editingRecord ? `/words/${editingRecord.id}` : '/words';
+      const endpoint = '/words';
       await apiRequest(endpoint, {
         method: 'POST',
         body: JSON.stringify(payload),
@@ -59,6 +59,7 @@ export function WordsTable() {
   ];
 
   const csvColumns = [
+    { key: 'id', label: 'id' },
     { key: 'categoryId', label: 'categoryId' },
     { key: 'nepali', label: 'nepali' },
     { key: 'nepaliRoman', label: 'nepaliRoman' },
@@ -70,6 +71,7 @@ export function WordsTable() {
   ];
 
   const csvTemplate = {
+    id: '',
     categoryId: 'paste-category-uuid-here',
     nepali: 'नमस्ते', nepaliRoman: 'Namaste', english: 'Hello',
     phonetic: 'nuh-muh-stay', emoji: '🙏', order: '1', audioUrl: '',

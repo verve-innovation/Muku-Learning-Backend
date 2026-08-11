@@ -14,7 +14,10 @@ export function useApi() {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const res = await fetch(`${apiUrl}/api/admin${endpoint}`, {
+    const cleanBase = (apiUrl || '').replace(/\/+$/, '');
+    const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+
+    const res = await fetch(`${cleanBase}/api/admin${cleanEndpoint}`, {
       ...options,
       headers,
     });

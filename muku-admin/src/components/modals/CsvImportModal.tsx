@@ -158,8 +158,8 @@ export function CsvImportModal({
     const example = templateRow
       ? columns.map(c => templateRow[c.key] ?? '').join(',')
       : columns.map(() => '').join(',');
-    const csv = `${header}\n${example}`;
-    const blob = new Blob([csv], { type: 'text/csv' });
+    const csv = `\ufeff${header}\n${example}`;
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;

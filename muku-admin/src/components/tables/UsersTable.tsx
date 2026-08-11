@@ -40,7 +40,7 @@ export function UsersTable() {
     payload.onboarded = formData.has('onboarded') as any;
 
     try {
-      const endpoint = editingRecord ? `/users/${editingRecord.id}` : '/users';
+      const endpoint = '/users';
       await apiRequest(endpoint, {
         method: 'POST',
         body: JSON.stringify(payload),
