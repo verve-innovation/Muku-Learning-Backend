@@ -32,7 +32,7 @@ export function CategoriesTable() {
     payload.isLocked = formData.has('isLocked') as any;
 
     try {
-      const endpoint = editingRecord ? `/categories/${editingRecord.id}` : '/categories';
+      const endpoint = '/categories';
       await apiRequest(endpoint, {
         method: 'POST',
         body: JSON.stringify(payload),

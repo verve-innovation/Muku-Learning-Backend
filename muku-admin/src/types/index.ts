@@ -32,7 +32,13 @@ export interface Word {
   emoji: string;
   order: number;
   audioUrl?: string;
+  lessonId?: string;
   category?: Category;
+  lesson?: {
+    id: string;
+    slug: string;
+    name: string;
+  };
 }
 
 export interface Progress {
@@ -74,6 +80,27 @@ export interface UserBadge {
   awardedAt: string;
   user?: User;
   badge?: Badge;
+}
+
+export interface FillBlank {
+  id: string;
+  lessonId: string;
+  wordId: string;
+  sentenceTemplate: string;
+  blankAnswer: string;
+  englishHint: string;
+  emoji: string;
+  order: number;
+  lesson?: {
+    id: string;
+    slug: string;
+    name: string;
+  };
+  word?: {
+    id: string;
+    nepali: string;
+    english: string;
+  };
 }
 
 export interface OverviewStats {

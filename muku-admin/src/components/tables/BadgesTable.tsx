@@ -31,7 +31,7 @@ export function BadgesTable() {
     const payload = Object.fromEntries(formData.entries());
 
     try {
-      const endpoint = editingRecord ? `/badges/${editingRecord.id}` : '/badges';
+      const endpoint = '/badges';
       await apiRequest(endpoint, {
         method: 'POST',
         body: JSON.stringify(payload),
