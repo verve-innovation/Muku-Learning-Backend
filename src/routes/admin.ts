@@ -226,7 +226,7 @@ router.delete('/lessons/:id', async (req: AuthRequest, res: Response) => {
 
 router.get('/lessons/category/:categoryId', async (req: AuthRequest, res: Response) => {
   try {
-    const categoryId = req.params.categoryId;
+    const categoryId = req.params.categoryId as string;
     const data = await prisma.lesson.findMany({
       where: { categoryId },
       orderBy: { order: 'asc' },
