@@ -53,7 +53,7 @@ export function CategoriesTable() {
     { header: 'Unlock Lvl', accessor: 'unlockLevel' },
     { header: 'Actions', render: (c: Category) => (
       <div>
-        <button className="bg-transparent border-none font-semibold text-[0.85rem] mr-[15px] cursor-pointer text-accent" onClick={() => handleEdit(c)}>Edit</button>
+        <button className="bg-transparent border-none font-semibold text-[0.85rem] mr-3.75 cursor-pointer text-accent" onClick={() => handleEdit(c)}>Edit</button>
         <button className="bg-transparent border-none font-semibold text-[0.85rem] cursor-pointer text-danger" onClick={() => deleteRecord(c.id)}>Delete</button>
       </div>
     )}
@@ -118,7 +118,7 @@ export function CategoriesTable() {
             <label htmlFor="isLocked" className="text-[0.85rem] font-semibold text-text-muted">Force lock regardless of level (Hidden / Unreleased)</label>
           </div>
 
-          <div className="flex justify-end gap-[15px] mt-[25px]">
+          <div className="flex justify-end gap-3.75 mt-6.25">
             <Button type="button" variant="secondary" onClick={() => setModalOpen(false)} className="w-auto px-6 py-2.5">Cancel</Button>
             <Button type="submit" className="w-auto px-6 py-2.5">Save Changes</Button>
           </div>

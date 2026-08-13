@@ -51,7 +51,7 @@ export function ProgressTable() {
     { header: 'Last Played', render: (p: Progress) => p.lastPlayedAt ? new Date(p.lastPlayedAt).toLocaleDateString() : 'Never' },
     { header: 'Actions', render: (p: Progress) => (
       <div>
-        <button className="bg-transparent border-none font-semibold text-[0.85rem] mr-[15px] cursor-pointer text-accent" onClick={() => handleEdit(p)}>Edit</button>
+        <button className="bg-transparent border-none font-semibold text-[0.85rem] mr-3.75 cursor-pointer text-accent" onClick={() => handleEdit(p)}>Edit</button>
         <button className="bg-transparent border-none font-semibold text-[0.85rem] cursor-pointer text-danger" onClick={() => deleteRecord(p.id)}>Delete</button>
       </div>
     )}
@@ -106,7 +106,7 @@ export function ProgressTable() {
             <Input type="number" label="Total Ans" name="totalAnswers" required defaultValue={editingRecord?.totalAnswers || 0} />
           </div>
 
-          <div className="flex justify-end gap-[15px] mt-[25px]">
+          <div className="flex justify-end gap-3.75 mt-6.25">
             <Button type="button" variant="secondary" onClick={() => setModalOpen(false)} className="w-auto px-6 py-2.5">Cancel</Button>
             <Button type="submit" className="w-auto px-6 py-2.5">Save Changes</Button>
           </div>
