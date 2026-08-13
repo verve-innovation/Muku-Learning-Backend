@@ -49,7 +49,7 @@ export function WordsTable() {
     { header: 'Order', accessor: 'order' },
     { header: 'Actions', render: (w: Word) => (
       <div>
-        <button className="bg-transparent border-none font-semibold text-[0.85rem] mr-[15px] cursor-pointer text-accent" onClick={() => { setEditingRecord(w); setModalOpen(true); }}>Edit</button>
+        <button className="bg-transparent border-none font-semibold text-[0.85rem] mr-3.75 cursor-pointer text-accent" onClick={() => { setEditingRecord(w); setModalOpen(true); }}>Edit</button>
         <button className="bg-transparent border-none font-semibold text-[0.85rem] cursor-pointer text-danger" onClick={() => deleteRecord(w.id)}>Delete</button>
       </div>
     )}
@@ -93,7 +93,7 @@ export function WordsTable() {
             <Input type="number" label="Display Order" name="order" required defaultValue={editingRecord?.order || 0} />
           </div>
           <Input label="Audio URL (Optional)" name="audioUrl" defaultValue={editingRecord?.audioUrl || ''} />
-          <div className="flex justify-end gap-[15px] mt-[25px]">
+          <div className="flex justify-end gap-3.75 mt-6.25">
             <Button type="button" variant="secondary" onClick={() => setModalOpen(false)} className="w-auto px-6 py-2.5">Cancel</Button>
             <Button type="submit" className="w-auto px-6 py-2.5">Save Changes</Button>
           </div>

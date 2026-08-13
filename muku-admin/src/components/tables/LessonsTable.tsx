@@ -49,7 +49,7 @@ export function LessonsTable() {
     { header: 'Order', accessor: 'order' },
     { header: 'Actions', render: (l: Lesson) => (
       <div>
-        <button className="bg-transparent border-none font-semibold text-[0.85rem] mr-[15px] cursor-pointer text-accent" onClick={() => { setEditingRecord(l); setModalOpen(true); }}>Edit</button>
+        <button className="bg-transparent border-none font-semibold text-[0.85rem] mr-3.75 cursor-pointer text-accent" onClick={() => { setEditingRecord(l); setModalOpen(true); }}>Edit</button>
         <button className="bg-transparent border-none font-semibold text-[0.85rem] cursor-pointer text-danger" onClick={() => deleteRecord(l.id)}>Delete</button>
       </div>
     )}
@@ -103,7 +103,7 @@ export function LessonsTable() {
           <Input label="Slug" name="slug" required defaultValue={editingRecord?.slug || ''} placeholder="e.g. fruits-lesson-1" />
           <Input label="Name" name="name" required defaultValue={editingRecord?.name || ''} placeholder="Lesson Name" />
           <Input type="number" label="Display Order" name="order" required defaultValue={editingRecord?.order || 1} />
-          <div className="flex justify-end gap-[15px] mt-[25px]">
+          <div className="flex justify-end gap-3.75 mt-6.25">
             <Button type="button" variant="secondary" onClick={() => setModalOpen(false)} className="w-auto px-6 py-2.5">Cancel</Button>
             <Button type="submit" className="w-auto px-6 py-2.5">Save Changes</Button>
           </div>

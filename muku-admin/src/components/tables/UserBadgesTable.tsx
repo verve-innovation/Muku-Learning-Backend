@@ -92,7 +92,7 @@ export function UserBadgesTable() {
           <Input label="User ID" name="userId" required placeholder="User UUID" />
           <Input label="Badge ID" name="badgeId" required placeholder="Badge UUID" />
 
-          <div className="flex justify-end gap-[15px] mt-[25px]">
+          <div className="flex justify-end gap-3.75 mt-6.25">
             <Button type="button" variant="secondary" onClick={() => setModalOpen(false)} className="w-auto px-6 py-2.5">Cancel</Button>
             <Button type="submit" className="w-auto px-6 py-2.5">Award Badge</Button>
           </div>

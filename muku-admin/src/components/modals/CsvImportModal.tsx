@@ -249,7 +249,7 @@ export function CsvImportModal({
                   {rows.slice(0, 5).map((row, i) => (
                     <tr key={i} className="border-b border-border-color last:border-0">
                       {columns.map(c => (
-                        <td key={c.key} className="px-3 py-2 text-text-main whitespace-nowrap max-w-[160px] truncate">
+                        <td key={c.key} className="px-3 py-2 text-text-main whitespace-nowrap max-w-40 truncate">
                           {String(row[c.key] ?? '')}
                         </td>
                       ))}

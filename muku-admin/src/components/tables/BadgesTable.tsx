@@ -50,7 +50,7 @@ export function BadgesTable() {
     { header: 'Description', accessor: 'description' },
     { header: 'Actions', render: (b: Badge) => (
       <div>
-        <button className="bg-transparent border-none font-semibold text-[0.85rem] mr-[15px] cursor-pointer text-accent" onClick={() => handleEdit(b)}>Edit</button>
+        <button className="bg-transparent border-none font-semibold text-[0.85rem] mr-3.75 cursor-pointer text-accent" onClick={() => handleEdit(b)}>Edit</button>
         <button className="bg-transparent border-none font-semibold text-[0.85rem] cursor-pointer text-danger" onClick={() => deleteRecord(b.id)}>Delete</button>
       </div>
     )}
@@ -96,7 +96,7 @@ export function BadgesTable() {
           <Input label="Emoji Icon" name="emoji" required defaultValue={editingRecord?.emoji || ''} placeholder="e.g. 🏆" />
           <Textarea label="Description" name="description" defaultValue={editingRecord?.description || ''} className="h-20" />
 
-          <div className="flex justify-end gap-[15px] mt-[25px]">
+          <div className="flex justify-end gap-3.75 mt-6.25">
             <Button type="button" variant="secondary" onClick={() => setModalOpen(false)} className="w-auto px-6 py-2.5">Cancel</Button>
             <Button type="submit" className="w-auto px-6 py-2.5">Save Changes</Button>
           </div>

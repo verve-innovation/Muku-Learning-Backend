@@ -19,7 +19,7 @@ export function DataTable({ columns, data, onAdd, addLabel = 'Add New Record', o
   return (
     <>
       {(onAdd || onImport) && (
-        <div id="tab-header-actions" className="mt-[-70px] mb-8 flex justify-end gap-3">
+        <div id="tab-header-actions" className="-mt-17.5 mb-8 flex justify-end gap-3">
           {onImport && (
             <Button
               onClick={onImport}
